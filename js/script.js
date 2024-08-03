@@ -33,7 +33,7 @@ const questions = [
       ]
     },
     {
-      "question": "Uma forma de declarar variável em JavaScript:",
+      "question": "A way to declare a variable in JavaScript:",
       "answers": [
         {
           "answer": "$var",
@@ -54,7 +54,7 @@ const questions = [
       ]
     },
     {
-      "question": "Qual o seletor de id no CSS?",
+      "question": "What is the id selector in CSS?",
       "answers": [
         {
           "answer": "#",
@@ -76,73 +76,159 @@ const questions = [
     },
   ]
 
-  // Quizz replacement for first question
-
-  function init() {
-
-    // Create the first question
-    
-    createQuestion(0);
+  // Replacing the layout with the first question
+function init() {
+    createQuestion(0)
   }
-
-  // Create the Question
+  
+  // Create a question 
   function createQuestion(i) {
-
-    // Clear the previous question
-
+  
+    // Clear previous question
     const oldButtons = answersBox.querySelectorAll("button");
-
+  
     oldButtons.forEach(function(btn) {
-        btn.remove();
+      btn.remove();
     });
-
-    // Change the question text
-
+  
+    // Change question text
     const questionText = question.querySelector("#question-text");
     const questionNumber = question.querySelector("#question-number");
-
+  
     questionText.textContent = questions[i].question;
     questionNumber.textContent = i + 1;
-
-    }
-
-    // Initialize the Quizz
-    
+  
+    // Insert alternatives
     questions[i].answers.forEach(function(answer, i) {
+      
+      // Change template text
+      const answerTemplate = document.querySelector(".answer-template").cloneNode(true);
+  
+      const letterBtn = answerTemplate.querySelector(".btn-letter");
+      const answerText = answerTemplate.querySelector(".question-answer");
+  
+      letterBtn.textContent = letters[i];
+      answerText.textContent = answer['answer'];
+  
+      answerTemplate.setAttribute("correct-answer", answer["correct"]);
+  
+      // Remove hide class and template from template
+      answerTemplate.classList.remove("hide");
+      answerTemplate.classList.remove("answer-template");
+  
+      // Insert templates in screen 
 
-        // Create the answer button
-
-        const answerTemplate = document.querySelector('.answer-template').cloneNode(true);
-
-        const letterBtn = answerTemplate.querySelector('.btn-letter');
-        const answerText = answerTemplate.querySelector('.question-answer');
-
-        letterBtn.textContent = letters[i];
-        answerText.textContent = answer['answer'];
-
-        answerTemplate.setAttribute('correct-answer', answer['correct']);
-
-        // Remove hide and answer-template class
-
-        answerTemplate.classList.remove('hide');
-        answerTemplate.classList.remove('answer-template');
-
-        // Insert the answer in the quizz
-
-        answersBox.appendChild(answerTemplate);
-
-        // Add event click to the button
-
-        answerTemplate.addEventListener('click', function() {
-            checkAnswer(this);
-        });
-
+      answersBox.appendChild(answerTemplate);
+  
     });
+  
+    // Create event on all buttons
 
-    // Increment the actual question
+    const buttons = answersBox.querySelectorAll("button");
+  
+    buttons.forEach(function(button) {
+      button.addEventListener("click", function() {
+        checkAnswer(this, buttons);
+      });
+    });
+  
+    // Increase the current number of questions
     actualQuestion++;
+  
+  }
+  
+  // Checking if the answer is correct
+  function checkAnswer(btn, buttons) {
+    
+    // Display wrong and right answers
 
+    buttons.forEach(function(button) {
+  
+      if(button.getAttribute("correct-answer") === "true") {
+        button.classList.add("correct-answer");
 
-    // Initialize the Quizz
+        // checks if the user got it right
+
+        if(btn === button) {
+
+          // increase the points
+
+          points++;
+        }
+      } else {
+        button.classList.add("wrong-answer");
+      }
+  
+    });
+  
+    nextQuestion();
+  
+  }
+  
+  // Displays the next question
+  function nextQuestion() {
+  
+    // Timer to see if you got it right or wrong
+
+    setTimeout(function() {
+  
+      // check if there are any more questions
+
+      if(actualQuestion >= questions.length) {
+
+        // displays success message
+
+        showSuccessMessage();
+        return;
+      }
+  
+      createQuestion(actualQuestion)
+  
+    }, 1000);
+  
+  }
+  
+  // End Screen 
+  function showSuccessMessage() {
+  
+    hideOrShowQuizz();
+  
+    // calc score
+
+    const score = ((points / questions.length) * 100).toFixed(2);
+    const scoreDisplay = document.querySelector("#display-score span");
+  
+    scoreDisplay.textContent = score.toString();
+  
+    // change number of correct questions
+
+    const correctAnswers = document.querySelector("#correct-answers");
+    correctAnswers.textContent = points;
+  
+    // change total questions
+
+    const totalQuestions = document.querySelector("#questions-qty");
+    totalQuestions.textContent = questions.length;
+  
+  }
+  
+  // Restart Quizz
+
+  const restartBtn = document.querySelector("#restart");
+  
+  restartBtn.addEventListener("click", function() {
+    actualQuestion = 0;
+    points = 0;
+    hideOrShowQuizz();
     init();
-
+  });
+  
+  // Shows or displays the quiz
+  function hideOrShowQuizz() {
+    quizzContainer.classList.toggle("hide");
+    scoreContainer.classList.toggle("hide");
+  }
+  
+  // Inicialitize 
+  init();
+  
