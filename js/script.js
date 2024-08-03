@@ -107,5 +107,42 @@ const questions = [
     }
 
     // Initialize the Quizz
+    
+    questions[i].answers.forEach(function(answer, i) {
+
+        // Create the answer button
+
+        const answerTemplate = document.querySelector('.answer-template').cloneNode(true);
+
+        const letterBtn = answerTemplate.querySelector('.btn-letter');
+        const answerText = answerTemplate.querySelector('.question-answer');
+
+        letterBtn.textContent = letters[i];
+        answerText.textContent = answer['answer'];
+
+        answerTemplate.setAttribute('correct-answer', answer['correct']);
+
+        // Remove hide and answer-template class
+
+        answerTemplate.classList.remove('hide');
+        answerTemplate.classList.remove('answer-template');
+
+        // Insert the answer in the quizz
+
+        answersBox.appendChild(answerTemplate);
+
+        // Add event click to the button
+
+        answerTemplate.addEventListener('click', function() {
+            checkAnswer(this);
+        });
+
+    });
+
+    // Increment the actual question
+    actualQuestion++;
+
+
+    // Initialize the Quizz
     init();
 
