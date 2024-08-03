@@ -82,8 +82,30 @@ const questions = [
 
     // Create the first question
     
-    console.log("Initializing...");
+    createQuestion(0);
   }
 
-  init();
+  // Create the Question
+  function createQuestion(i) {
+
+    // Clear the previous question
+
+    const oldButtons = answersBox.querySelectorAll("button");
+
+    oldButtons.forEach(function(btn) {
+        btn.remove();
+    });
+
+    // Change the question text
+
+    const questionText = question.querySelector("#question-text");
+    const questionNumber = question.querySelector("#question-number");
+
+    questionText.textContent = questions[i].question;
+    questionNumber.textContent = i + 1;
+
+    }
+
+    // Initialize the Quizz
+    init();
 
